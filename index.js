@@ -20,3 +20,14 @@ const db = mysql.createConnection(
     },
     console.log('Successfully connected to the database!')
 )
+
+async function menu() {
+    const { action } = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'action',
+            message: 'What action would you like to perform?',
+            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role']
+        },
+    ])
+}
