@@ -29,5 +29,24 @@ async function menu() {
             message: 'What action would you like to perform?',
             choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role']
         },
-    ])
+    ]);
+
+    switch (action) {
+        case 'View all departments':
+            const queryDepartments = `SELECT * FROM department;`
+            db.query(queryDepartments, (err, results) => {
+                if (err) {
+                    console.error('Error retrieving the departments:', err);
+                } else {
+                    console.table(results);
+                }
+                menu();
+            })
+        break;
+    case 'View all roles':
+
+        break;
+    }
 }
+
+menu();
