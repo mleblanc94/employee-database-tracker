@@ -44,8 +44,25 @@ async function menu() {
             })
         break;
     case 'View all roles':
-
+        const queryRoles = `SELECT * FROM role;`
+        db.query(queryRoles, (err, results) => {
+            if (err) {
+                console.error('Error retrieving the roles:', err);
+            } else {
+                console.table(results);
+            }
+            menu();
+        })
         break;
+    case 'View all employees':
+        const queryEmployees = `SELECT * FROM employee;`
+        db.query(queryEmployees, (err, results) => {
+            if (err) {
+                console.error('Error retrieving the employees:', err);
+            } else {
+                console.table(results);
+            }
+        })
     }
 }
 
