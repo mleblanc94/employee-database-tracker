@@ -62,6 +62,24 @@ async function menu() {
             } else {
                 console.table(results);
             }
+            menu();
+        })
+        break;
+    case 'Add a department':
+        const { department } = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'department',
+                message: 'Please enter the department you would like to be added'
+            }
+        ]);
+        const addDepartment = `INSERT INTO department (dep_name) VALUES ('${department}');`
+        db.query(addDepartment, (err, results) => {
+            if (err) {
+                console.error('Error adding a department into the database:', err);
+            } else {
+                console.table('Department has been added to the database!', results);
+            }
         })
     }
 }

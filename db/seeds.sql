@@ -1,15 +1,15 @@
-INSERT INTO department (id, dep_name)
-VALUES (001, "IT"),
-       (002, "Finance"),
-       (003, "Marketing");
+INSERT INTO department (dep_name)
+VALUES ("IT"),
+       ("Finance"),
+       ("Marketing");
        
-INSERT INTO role (id, title, salary, department_id)
-VALUES (01, 'Developer', 80000, 001),
-       (02, 'Lead Accountant', 100000, 002),
-       (03, 'Marketing Lead', 70000, 003);
+INSERT INTO role (title, salary, department_id)
+VALUES ('Developer', 80000, 1),
+       ('Lead Accountant', 100000, 2),
+       ('Marketing Lead', 70000, 3);
 
-INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
-VALUES (1, 'Jeb', 'Smith', 01),
-       (2, 'John', 'Smith', 01, 1),
-       (3, 'Sammy', 'Smith', 03),
-       (4, 'Timmy', 'Tuckwell', 02);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ('Jeb', 'Smith', 1),
+       ('John', 'Smith', 1, 1),
+       ('Sammy', 'Smith', 3),
+       ('Timmy', 'Tuckwell', 2);
