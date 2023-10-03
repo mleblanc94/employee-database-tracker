@@ -149,13 +149,12 @@ async function menu() {
                 }
             ]).then(async (answers) => {
                 const { roleName, salary, roleDepartment } = answers;
-                console.log(roleDepartment);
                 const addRole = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);`;
                 db.query(addRole, [roleName, salary, roleDepartment], (err, results) => {
                     if (err) {
                         console.error('Error adding role to database:', err);
                     } else {
-                        console.log('Successfully added the role to the database');
+                        console.log(`Added role ${roleName} to the database`);
                     }
                     menu();
                 });
@@ -163,6 +162,129 @@ async function menu() {
         }
     });
     break;
-    }}
+    // Case for adding an employee to the database
+    case 'Add an employee':
+        // Querying everything from roles
+        db.query(`SELECT * FROM role`, (err, results) => {
+            if (err) {
+                console.error('Error querying departments to allow user to select from:', err);
+            } else {
+                console.log('Successfully queried departments to allow user to pick from');
+                // Extract department information from query results
+                const roles = results.map((roleData) => ({
+                    name: roleData.title,
+                    value: roleData.id,
+                }));
+
+    // Querying everything from employee table
+    db.query(`SELECT * FROM employee`, (err, managersResults) => {
+        if (err) {
+            console.error('There was an error that occurred when querying for the employee table:', err);
+        } else {
+            console.log('Successfully queried employees to allow users to select which is a manager');
+            // Extract employee names from the data
+            const managers = [
+                {name: 'None', value: null}, ...managersResults.map((managerData) => ({
+                name: `${managerData.first_name} ${managerData.last_name}`,
+                value: managerData.id,
+            })),
+        ];
+
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'firstName',
+        message: 'Please enter the first name of the employee you would like added:'
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: 'Please enter the last name of the employee you would like added:'
+        },
+        {
+            type: 'list',
+            name: 'employeeRole',
+            message: 'Please select which role this employee has:',
+            choices: roles
+        },
+        {
+            type: 'list',
+            name: 'employeeManager',
+            message: 'Please select which manager this employee has:',
+            choices: managers
+        }
+    ]).then(async (answers) => {
+        const { firstName, lastName, employeeRole, employeeManager } = answers;
+        const addEmployee = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);`;
+        db.query(addEmployee, [firstName, lastName, employeeRole, employeeManager], (err, results) => {
+            if (err) {
+                console.error('Error adding employee to database:', err);
+            } else {
+                console.log(`Added ${firstName} ${lastName} to the database`);
+            }
+            menu();
+        });
+    });
+}
+});
+    }});
+break;
+// Case for updating an employees role in database
+case 'Update employee role':
+    // Pull employees from the database to allow the user to select which ones role to edit
+    db.query(`SELECT * FROM employee`, (err, employeeResults) => {
+        if (err) {
+            console.error('Error getting all employees from the database to select which role to update', err);
+        } else {
+            console.log('Successfully queried employees to allow users to select which role to update');
+            // Extract employee names from the data
+            const employees = employeeResults.map((employeeData) => ({
+                name: `${employeeData.first_name} ${employeeData.last_name}`,
+                value: employeeData.id,
+            }));
+
+            // Pull roles from the database
+            db.query(`SELECT * FROM role`, (err, roleResults) => {
+                if (err) {
+                    console.error('Error retrieving roles from database');
+                } else {
+                    console.log('Successfully queried roles from database')
+                    const roleUpdates = roleResults.map((rolesToShow) => ({
+                        name: rolesToShow.title,
+                        value: rolesToShow.id,
+                    }))
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employeeToUpdate',
+                    message: 'Please choose an employee from the database to update the role of',
+                    choices: employees
+                },
+                {
+                    type: 'list',
+                    name: 'updatedRole',
+                    message: 'Please select the new role for this employee',
+                    choices: roleUpdates
+                }
+            ]).then(async (answers) => {
+                const { employeeToUpdate, updatedRole } = answers;
+                const updateEmployee = `UPDATE employee SET role_id = '?' WHERE id = '?';`;
+                db.query(updateEmployee, [updatedRole, employeeToUpdate], (err, results) => {
+                    if (err) {
+                        console.error('Error adding employee to the database:', err);
+                    } else {
+                        console.log(`Role updated for ${employeeToUpdate}`);
+                    }
+                    menu();
+                });
+            });
+        }
+    });
+}
+    });
+    break;
+}
+}
 
 menu();
