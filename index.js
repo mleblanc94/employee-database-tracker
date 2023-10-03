@@ -125,9 +125,9 @@ async function menu() {
         } else {
             console.log('Successfully queried departments to allow user to pick from');
             // Extract department information from query results
-            const departments = results.map((row) => ({
-                name: row.dep_name,
-                id: row.id,
+            const departments = results.map((data) => ({
+                name: data.dep_name,
+                value: data.id,
             }));
 
             inquirer.prompt([
@@ -145,13 +145,13 @@ async function menu() {
                     type: 'list',
                     name: 'roleDepartment',
                     message: 'Please select which department this role is a part of:',
-                    choices: departments, // Use the extracted department data
+                    choices: departments
                 }
             ]).then(async (answers) => {
                 const { roleName, salary, roleDepartment } = answers;
                 console.log(roleDepartment);
-                const addRole = `INSERT INTO role (title, salary, department_id) VALUES ('${roleName}', '${salary}', '${roleDepartment.id}');`;
-                db.query(addRole, (err, results) => {
+                const addRole = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);`;
+                db.query(addRole, [roleName, salary, roleDepartment], (err, results) => {
                     if (err) {
                         console.error('Error adding role to database:', err);
                     } else {
