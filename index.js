@@ -33,15 +33,6 @@ const queryAsync = (query) => {
     })
 }
 
-function viewRoles() {
-    const getRoles = `SELECT role.id, role.title, role.salary, department.dep_name 
-    FROM role INNER JOIN department ON role.department_id = department.id;`;
-    db.query(getRoles, (err, results) => {
-        if (err) throw err;
-        console.table(results)
-    })
-}
-
 async function menu() {
     const { action } = await inquirer.prompt([
         {
